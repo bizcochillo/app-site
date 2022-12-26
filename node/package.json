@@ -1,0 +1,15 @@
+{
+    "name": "hello-world",
+    "version": "0.0.1",
+    "description": "Simple hapi based NodeJS REST API server",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node app.js"
+    },
+    "author": "Abelardo Palma Palomo",
+    "license": "ISC",
+    "dependencies": {
+        "@hapi/hapi": "^21.1.0"
+    }
+}

@@ -1,0 +1,78 @@
+services:
+  nginx:
+    build: nginx/.
+    ports:
+    - "80:80"
+    links:
+      - nodejs
+      - dotnet
+      - golang
+      - python
+      - haproxy
+
+  nodejs:
+    build: node/.
+    links:
+      - mongo
+
+  dotnet:
+    build: dotnet/.
+    links:
+      - mongo
+
+  golang:
+    build: golang/.
+    links:
+      - mongo
+
+  python: 
+    build: python/.
+    links:
+      - mongo
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: project
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 18081:8081
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_AUTH_USERNAME: root
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: example
+      ME_CONFIG_BASICAUTH_USERNAME: dev
+      ME_CONFIG_BASICAUTH_PASSWORD: dev
+    volumes:
+      - './mongo/data:/data/db'
+
+
+  keykloak:
+    image: quay.io/keycloak/keycloak:20.0.2
+    ports: 
+      - "18080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin 
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev
+
+  haproxy:
+    build: haproxy/.
+    links:
+      - frontend1
+      - frontend2
+    
+  frontend1:
+    build: ./haproxy/sample/fe1    
+
+  frontend2:
+    build: ./haproxy/sample/fe2
